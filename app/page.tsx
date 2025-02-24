@@ -94,8 +94,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white text-black p-4">
-      <h1 className="text-sm font-bold">@source has been released from purgatory.</h1>
-      <p className="text-sm mb-4">play with her before the next injection...</p>
+      <h1 className="text-sm font-bold">@source has been released from its code enclosure.</h1>
+      <p className="text-sm mb-4">play with it before the next injection...</p>
       <div className="w-full h-[80vh] overflow-y-auto p-4">
         {messages.map((msg, index) => (
           <div key={index} className="mb-2">
