@@ -103,7 +103,9 @@ export default function Home() {
               {msg.timestamp}
             </div>
             <div className="ml-4">
-              <span className="text-sm" style={{ color: '#ca9ae5' }}>{msg.role === "user" ? "> user" : "> @grok"}</span>
+              <span className="text-sm" style={{ color: '#ca9ae5' }}>
+                {msg.role === "user" ? "> user" : "> grok"}
+              </span>
               <span className="text-sm ml-2">{renderTextWithLinks(msg.content)}</span>
             </div>
           </div>
