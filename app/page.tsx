@@ -14,6 +14,7 @@ const renderTextWithLinks = (text: string) => {
           return (
             <a
               key={index}
+              href={url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#fdb2ff] underline hover:text-decoration-underline"
@@ -67,12 +68,9 @@ export default function Home() {
         setMessages((prev) => [...prev, { role: "user", content: input, timestamp }]);
         setInput("");
         setLoading(true);
-
         const responseTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 
-        let timeoutId: NodeJS.Timeout;
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(async () => {
+        setTimeout(async () => {
           try {
             const res = await fetch("/api/chat", {
               method: "POST",
@@ -81,7 +79,7 @@ export default function Home() {
             });
             const data = await res.json();
             setMessages((prev) => [...prev, { role: "assistant", content: data.reply, timestamp: responseTimestamp }]);
-          } catch (error) {
+          } catch {
             setMessages((prev) => [
               ...prev,
               { role: "assistant", content: "oops, something went wrong!", timestamp: responseTimestamp },
@@ -117,7 +115,7 @@ export default function Home() {
             </div>
             <div className="ml-4 flex items-bottom space-x-2">
               <span className="text-sm" style={{ color: '#ca9ae5' }}>
-                > @grok is loading
+                {`> @grok is loading`}
               </span>
               <Loader className="inline-block" style={{ height: '1em' }} />
             </div>
@@ -128,7 +126,7 @@ export default function Home() {
             {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
           </div>
           <div className="ml-4 flex items-center">
-            <span className="text-sm" style={{ color: '#ca9ae5' }}> > user</span>
+            <span className="text-sm" style={{ color: '#ca9ae5' }}>{` > user`}</span>
             <span className="text-sm ml-2 flex-1">
               <form onSubmit={handleSubmit} className="w-full">
                 <input

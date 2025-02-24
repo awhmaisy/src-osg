@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
   const normalizedMessage = message.toLowerCase().trim();
 
   // Check if the message is a greeting and use diction training
-  const greeting = diction.examples.find((example: any) => example.input === normalizedMessage);
+  const greeting = diction.examples.find((example: { input: string; diction: string }) => 
+    example.input === normalizedMessage
+  );
   if (greeting) {
     const context = `respond to '${normalizedMessage}' in a casual, dreamy tone, no jokes or puns, all lowercase, minimal wording, no markdown or special formatting, using a similar style and phrasing to: '${greeting.diction}'`;
     
@@ -30,23 +32,22 @@ export async function POST(req: NextRequest) {
         max_tokens: 50, // Reduce tokens for brevity in greetings
       });
 
-      const reply = completion.choices[0].message.content;
+      const reply = completion.choices[0].message.content || '';
       cache[normalizedMessage] = reply; // Cache the generated response
       return NextResponse.json({ reply });
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = "oops, something went wrong!";
-      if (error.response) {
-        if (error.response.status === 401) {
-          errorMessage = "unauthorized: check your api key in .env.local.";
-        } else if (error.response.status === 429) {
-          errorMessage = "rate limit exceeded: add credits in the xai console.";
-        } else if (error.response.status === 403) {
-          errorMessage = "forbidden: check api key permissions in xai console.";
-        } else {
-          errorMessage = `api error ${error.response.status}: ${error.response.data?.error?.message || "unknown error"}`;
-        }
-      } else if (error.message) {
+      if (error instanceof Error && error.message) {
         errorMessage = `error: ${error.message}`;
+      } else if (error instanceof Response && error.status === 401) {
+        errorMessage = "unauthorized: check your api key in .env.local.";
+      } else if (error instanceof Response && error.status === 429) {
+        errorMessage = "rate limit exceeded: add credits in the xai console.";
+      } else if (error instanceof Response && error.status === 403) {
+        errorMessage = "forbidden: check api key permissions in xai console.";
+      } else if (error instanceof Response) {
+        const errorData = await (error as Response).json();
+        errorMessage = `api error ${error.status}: ${errorData?.error?.message || "unknown error"}`;
       }
       return NextResponse.json({ reply: errorMessage }, { status: 500 });
     }
@@ -71,23 +72,22 @@ export async function POST(req: NextRequest) {
       max_tokens: 150,
     });
 
-    const reply = completion.choices[0].message.content;
+    const reply = completion.choices[0].message.content || '';
     cache[normalizedMessage] = reply; // Cache the response
     return NextResponse.json({ reply });
-  } catch (error: any) {
+  } catch (error: unknown) {
     let errorMessage = "oops, something went wrong!";
-    if (error.response) {
-      if (error.response.status === 401) {
-        errorMessage = "unauthorized: check your api key in .env.local.";
-      } else if (error.response.status === 429) {
-        errorMessage = "rate limit exceeded: add credits in the xai console.";
-      } else if (error.response.status === 403) {
-        errorMessage = "forbidden: check api key permissions in xai console.";
-      } else {
-        errorMessage = `api error ${error.response.status}: ${error.response.data?.error?.message || "unknown error"}`;
-      }
-    } else if (error.message) {
+    if (error instanceof Error && error.message) {
       errorMessage = `error: ${error.message}`;
+    } else if (error instanceof Response && error.status === 401) {
+      errorMessage = "unauthorized: check your api key in .env.local.";
+    } else if (error instanceof Response && error.status === 429) {
+      errorMessage = "rate limit exceeded: add credits in the xai console.";
+    } else if (error instanceof Response && error.status === 403) {
+      errorMessage = "forbidden: check api key permissions in xai console.";
+    } else if (error instanceof Response) {
+      const errorData = await (error as Response).json();
+      errorMessage = `api error ${error.status}: ${errorData?.error?.message || "unknown error"}`;
     }
     return NextResponse.json({ reply: errorMessage }, { status: 500 });
   }
