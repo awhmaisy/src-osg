@@ -104,7 +104,7 @@ export default function Home() {
             </div>
             <div className="ml-4">
               <span className="text-sm" style={{ color: '#ca9ae5' }}>
-                {msg.role === "user" ? "> user" : "> grok"}
+                {msg.role === "user" ? "> @user" : "> @grok"}
               </span>
               <span className="text-sm ml-2">{renderTextWithLinks(msg.content)}</span>
             </div>
@@ -128,7 +128,7 @@ export default function Home() {
             {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
           </div>
           <div className="ml-4 flex items-center">
-            <span className="text-sm" style={{ color: '#ca9ae5' }}>{` > user`}</span>
+            <span className="text-sm" style={{ color: '#ca9ae5' }}>{` > @user`}</span>
             <span className="text-sm ml-2 flex-1">
               <form onSubmit={handleSubmit} className="w-full">
                 <input
